@@ -203,14 +203,33 @@ function DirectorDashboard({ onLogout }: { onLogout: () => void }) {
   const { appointments } = useAppointments();
   const tip = tooltipStyles(isLight);
 
-  const statusData = useMemo(() => {
-    const confirmados = appointments.filter((a) => isConfirmado(a.status)).length;
-    const pendentes = appointments.filter((a) => isEmTransicao(a.status)).length;
-    return [
+  const confirmados = useMemo(
+    () => appointments.filter((a) => isConfirmado(a.status)).length,
+    [appointments],
+  );
+  const emTransicao = useMemo(
+    () => appointments.filter((a) => isEmTransicao(a.status)).length,
+    [appointments],
+  );
+  // Fila ativa: agendado + confirmado + pendente atendente + espera + aguardar.
+  const totalAgendados = useMemo(
+    () => appointments.filter((a) => isFilaAtiva(a.status)).length,
+    [appointments],
+  );
+  const campanhasReativacao = useMemo(
+    () => appointments.filter((a) => Number(a.tentativasReativacao ?? 0) > 0).length,
+    [appointments],
+  );
+  const taxaConfirmacao =
+    totalAgendados > 0 ? `${Math.round((confirmados / totalAgendados) * 100)}%` : "0%";
+
+  const statusData = useMemo(
+    () => [
       { name: "Confirmados", value: confirmados, hex: "#F59E0B" },
-      { name: "Em Transição", value: pendentes, hex: isLight ? "#E2E8F0" : "#334155" },
-    ];
-  }, [appointments, isLight]);
+      { name: "Em Transição", value: emTransicao, hex: isLight ? "#E2E8F0" : "#334155" },
+    ],
+    [confirmados, emTransicao, isLight],
+  );
 
   return (
     <div className="mx-auto max-w-7xl animate-in px-4 pb-16 pt-28 fade-in slide-in-from-bottom-4 duration-500 sm:px-6 lg:px-8">
