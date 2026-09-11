@@ -60,8 +60,15 @@ export function ReceptionView() {
   const { appointments, lastUpdate, fetchData } = useAppointments();
   const [search, setSearch] = useState("");
   const [mounted, setMounted] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => setMounted(true), []);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    void fetchData();
+    setTimeout(() => setRefreshing(false), 800);
+  };
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
