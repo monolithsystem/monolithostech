@@ -130,31 +130,31 @@ export function ReceptionView() {
           icon={<Users className="h-5 w-5" strokeWidth={1.5} />}
           label="Atendimentos Históricos"
           value={historicos}
-          accent="border-l-4 border-l-slate-400/40"
-          iconColor="text-slate-400"
+          accent="border-l-4 border-l-slate-400/50 dark:border-l-slate-400"
+          iconColor="text-slate-500 dark:text-slate-400"
         />
         {/* CARD 2 — Dourado Metálico de Luxo (fila ativa) */}
         <StatCard
           icon={<Calendar className="h-5 w-5" strokeWidth={1.5} />}
           label="Com Horário Marcado"
           value={filaAtiva}
-          accent="border-l-4 border-l-amber-500"
-          iconColor="text-amber-500"
+          accent="border-l-4 border-l-amber-500/50 dark:border-l-amber-500"
+          iconColor="text-amber-600 dark:text-amber-500"
         />
         <StatCard
           icon={<CheckCircle2 className="h-5 w-5" strokeWidth={1.5} />}
           label="Confirmados"
           value={confirmados}
-          accent="border-l-4 border-l-emerald-600/40"
-          iconColor="text-emerald-500"
+          accent="border-l-4 border-l-emerald-600/50 dark:border-l-emerald-600"
+          iconColor="text-emerald-600 dark:text-emerald-500"
         />
-        {/* CARD 4 — Bronze / Cobre metálico */}
+        {/* CARD 4 — Roxo / Violeta nobre (reativação) */}
         <StatCard
           icon={<RefreshCw className="h-5 w-5" strokeWidth={1.5} />}
           label="Pacientes em Reativação"
           value={emReativacao}
-          accent="border-l-4 border-l-rose-700/40"
-          iconColor="text-rose-500"
+          accent="border-l-4 border-l-purple-600/50 dark:border-l-purple-500"
+          iconColor="text-purple-600 dark:text-purple-400"
         />
       </div>
 
