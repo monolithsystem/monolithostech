@@ -259,28 +259,28 @@ function DirectorDashboard({ onLogout }: { onLogout: () => void }) {
         <SummaryCard
           icon={<Users className="h-5 w-5" strokeWidth={1.5} />}
           label="Total Agendados"
-          value={40}
+          value={totalAgendados}
           accent="border-l-4 border-l-amber-500"
           iconColor="text-amber-500"
         />
         <SummaryCard
           icon={<TrendingUp className="h-5 w-5" strokeWidth={1.5} />}
           label="Taxa de Confirmação"
-          value="85%"
+          value={taxaConfirmacao}
           accent="border-l-4 border-l-emerald-600/40"
           iconColor="text-emerald-500"
         />
         <SummaryCard
           icon={<AlertTriangle className="h-5 w-5" strokeWidth={1.5} />}
           label="Pendências de Confirmação"
-          value={6}
+          value={emTransicao}
           accent="border-l-4 border-l-rose-700/40"
           iconColor="text-rose-500"
         />
         <SummaryCard
           icon={<RefreshCw className="h-5 w-5" strokeWidth={1.5} />}
           label="Campanhas de Reativação"
-          value={14}
+          value={campanhasReativacao}
           accent="border-l-4 border-l-rose-700/40"
           iconColor="text-rose-500"
         />
