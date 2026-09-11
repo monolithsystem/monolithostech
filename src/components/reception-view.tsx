@@ -109,15 +109,18 @@ export function ReceptionView() {
             {mounted ? `Atualizado às ${lastUpdate.toLocaleTimeString("pt-BR")}` : "\u00A0"}
           </span>
           <button
-            onClick={() => void fetchData()}
+            onClick={handleRefresh}
             className={cn(
-              "group flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-foreground transition-all duration-300 hover:border-amber-500/25",
+              "group flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-zinc-700 transition-all duration-300 hover:border-amber-500/25 dark:text-foreground",
               SURFACE,
             )}
           >
             <RefreshCw
-              className="h-4 w-4 text-gold transition-transform duration-500 group-hover:rotate-180"
-              strokeWidth={1.5}
+              className={cn(
+                "h-4 w-4 text-amber-600 transition-transform duration-500 dark:text-gold",
+                refreshing ? "animate-spin" : "group-hover:rotate-180",
+              )}
+              strokeWidth={1.75}
             />
             Atualizar
           </button>
