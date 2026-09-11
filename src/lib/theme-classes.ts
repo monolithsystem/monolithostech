@@ -3,7 +3,13 @@
 export const SURFACE =
   "rounded-xl border border-amber-500/10 bg-black/50 backdrop-blur-lg shadow-[0_0_15px_rgba(212,175,55,0.02)] light:border-amber-600/15 light:bg-white light:backdrop-blur-none light:shadow-md light:shadow-slate-200/60";
 
-export const VALUE_TEXT = "text-white light:text-zinc-900";
+/** Carcaça dos cards superiores: branco puro no claro, vidro fumê no escuro. */
+export const CARD_SURFACE =
+  "rounded-xl border border-slate-100/80 bg-white shadow-sm shadow-slate-200/50 dark:border-amber-500/10 dark:bg-black/50 dark:backdrop-blur-lg dark:shadow-[0_0_15px_rgba(212,175,55,0.02)]";
+
+export const VALUE_TEXT = "text-zinc-900 dark:text-white";
+
+export const LABEL_TEXT = "text-slate-600 dark:text-muted-foreground";
 
 export const TITLE_TEXT = "text-foreground";
 
