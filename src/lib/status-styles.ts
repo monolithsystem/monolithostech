@@ -131,9 +131,9 @@ export function getStatusStyle(status?: string | null): StatusStyle {
   }
 
   return {
-    label: s ? titleCase(s) : "Pendente",
-    className: PLATINUM,
-    dot: "bg-slate-400",
+    label: titleCase(s),
+    className: TITANIUM,
+    dot: "bg-slate-500 dark:bg-zinc-500",
     hex: "#334155",
     pulse: false,
   };
