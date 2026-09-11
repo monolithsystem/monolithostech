@@ -7,12 +7,21 @@ export type StatusStyle = {
 };
 
 /** Paleta estrita de alta costura — pílula translúcida + micro ponto brilhante. */
-const EMERALD = "bg-emerald-500/10 text-emerald-300 ring-1 ring-emerald-500/20";
-const GOLD = "bg-amber-500/10 text-amber-300 ring-1 ring-amber-500/20";
-const ORANGE = "bg-orange-500/10 text-orange-300 ring-1 ring-orange-500/25";
-const VIOLET = "bg-violet-500/10 text-violet-300 ring-1 ring-violet-500/25";
-const CYAN = "bg-sky-500/10 text-cyan-300 ring-1 ring-cyan-500/25";
-const PLATINUM = "bg-slate-500/10 text-slate-300 ring-1 ring-slate-400/20";
+const EMERALD =
+  "bg-emerald-100 text-zinc-900 ring-1 ring-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-500/20";
+const GOLD =
+  "bg-amber-100 text-zinc-900 ring-1 ring-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-500/20";
+const ORANGE =
+  "bg-orange-100 text-zinc-900 ring-1 ring-orange-500/40 dark:bg-orange-500/10 dark:text-orange-300 dark:ring-orange-500/25";
+const VIOLET =
+  "bg-violet-100 text-zinc-900 ring-1 ring-violet-500/40 dark:bg-violet-500/10 dark:text-violet-300 dark:ring-violet-500/25";
+const CYAN =
+  "bg-cyan-100 text-zinc-900 ring-1 ring-cyan-500/40 dark:bg-sky-500/10 dark:text-cyan-300 dark:ring-cyan-500/25";
+const PLATINUM =
+  "bg-slate-200 text-zinc-900 ring-1 ring-slate-400/50 dark:bg-slate-500/10 dark:text-slate-300 dark:ring-slate-400/20";
+/** Fallback de segurança: status vazio ou desconhecido. */
+const TITANIUM =
+  "bg-slate-100 text-slate-700 ring-1 ring-slate-300 dark:bg-zinc-800 dark:text-zinc-400 dark:ring-zinc-700";
 
 function titleCase(value: string): string {
   return value
@@ -22,12 +31,24 @@ function titleCase(value: string): string {
     .join(" ");
 }
 
-export function getStatusStyle(status: string): StatusStyle {
+export function getStatusStyle(status?: string | null): StatusStyle {
   const s = (status ?? "")
     .toLowerCase()
     .trim()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
+
+  // Fallback de segurança: coluna E vazia, nula ou sem status preenchido.
+  if (!s) {
+    return {
+      label: "Pendente",
+      className: TITANIUM,
+      dot: "bg-slate-500 dark:bg-zinc-500",
+      hex: "#334155",
+      pulse: false,
+    };
+  }
+
 
   // 3. Espera + confirmação → laranja neon suave
   if (s.includes("espera") && s.includes("confirma")) {
@@ -110,9 +131,9 @@ export function getStatusStyle(status: string): StatusStyle {
   }
 
   return {
-    label: s ? titleCase(s) : "Pendente",
-    className: PLATINUM,
-    dot: "bg-slate-400",
+    label: titleCase(s),
+    className: TITANIUM,
+    dot: "bg-slate-500 dark:bg-zinc-500",
     hex: "#334155",
     pulse: false,
   };

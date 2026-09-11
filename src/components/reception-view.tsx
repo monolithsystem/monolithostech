@@ -12,7 +12,14 @@ import {
 import { cn } from "@/lib/utils";
 import { getStatusStyle } from "@/lib/status-styles";
 import { useAppointments } from "@/hooks/use-appointments";
-import { SURFACE, VALUE_TEXT, isConfirmado, isFilaAtiva } from "@/lib/theme-classes";
+import {
+  SURFACE,
+  CARD_SURFACE,
+  VALUE_TEXT,
+  LABEL_TEXT,
+  isConfirmado,
+  isFilaAtiva,
+} from "@/lib/theme-classes";
 
 const MESES = [
   "Janeiro",
@@ -53,8 +60,15 @@ export function ReceptionView() {
   const { appointments, lastUpdate, fetchData } = useAppointments();
   const [search, setSearch] = useState("");
   const [mounted, setMounted] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => setMounted(true), []);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    void fetchData();
+    setTimeout(() => setRefreshing(false), 800);
+  };
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -102,15 +116,18 @@ export function ReceptionView() {
             {mounted ? `Atualizado às ${lastUpdate.toLocaleTimeString("pt-BR")}` : "\u00A0"}
           </span>
           <button
-            onClick={() => void fetchData()}
+            onClick={handleRefresh}
             className={cn(
-              "group flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-foreground transition-all duration-300 hover:border-amber-500/25",
+              "group flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-zinc-700 transition-all duration-300 hover:border-amber-500/25 dark:text-foreground",
               SURFACE,
             )}
           >
             <RefreshCw
-              className="h-4 w-4 text-gold transition-transform duration-500 group-hover:rotate-180"
-              strokeWidth={1.5}
+              className={cn(
+                "h-4 w-4 text-amber-600 transition-transform duration-500 dark:text-gold",
+                refreshing ? "animate-spin" : "group-hover:rotate-180",
+              )}
+              strokeWidth={1.75}
             />
             Atualizar
           </button>
@@ -123,31 +140,31 @@ export function ReceptionView() {
           icon={<Users className="h-5 w-5" strokeWidth={1.5} />}
           label="Atendimentos Históricos"
           value={historicos}
-          accent="border-l-4 border-l-slate-400/40"
-          iconColor="text-slate-400"
+          accent="border-l-4 border-l-slate-400/50 dark:border-l-slate-400"
+          iconColor="text-slate-500 dark:text-slate-400"
         />
         {/* CARD 2 — Dourado Metálico de Luxo (fila ativa) */}
         <StatCard
           icon={<Calendar className="h-5 w-5" strokeWidth={1.5} />}
           label="Com Horário Marcado"
           value={filaAtiva}
-          accent="border-l-4 border-l-amber-500"
-          iconColor="text-amber-500"
+          accent="border-l-4 border-l-amber-500/50 dark:border-l-amber-500"
+          iconColor="text-amber-600 dark:text-amber-500"
         />
         <StatCard
           icon={<CheckCircle2 className="h-5 w-5" strokeWidth={1.5} />}
           label="Confirmados"
           value={confirmados}
-          accent="border-l-4 border-l-emerald-600/40"
-          iconColor="text-emerald-500"
+          accent="border-l-4 border-l-emerald-600/50 dark:border-l-emerald-600"
+          iconColor="text-emerald-600 dark:text-emerald-500"
         />
-        {/* CARD 4 — Bronze / Cobre metálico */}
+        {/* CARD 4 — Roxo / Violeta nobre (reativação) */}
         <StatCard
           icon={<RefreshCw className="h-5 w-5" strokeWidth={1.5} />}
           label="Pacientes em Reativação"
           value={emReativacao}
-          accent="border-l-4 border-l-rose-700/40"
-          iconColor="text-rose-500"
+          accent="border-l-4 border-l-purple-600/50 dark:border-l-purple-500"
+          iconColor="text-purple-600 dark:text-purple-400"
         />
       </div>
 
@@ -249,7 +266,10 @@ export function ReceptionView() {
                     <td className="whitespace-nowrap p-4">
                       {medico !== "-" ? (
                         <div className="flex items-center gap-2 text-muted-foreground">
-                          <Stethoscope className="h-3.5 w-3.5 text-gold/60" strokeWidth={1.5} />
+                          <Stethoscope
+                            className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400"
+                            strokeWidth={1.75}
+                          />
                           {medico}
                         </div>
                       ) : (
@@ -297,14 +317,19 @@ function StatCard({
   return (
     <div
       className={cn(
-        "group relative animate-fade-in overflow-hidden p-5 transition-all duration-500 hover:border-amber-500/20",
-        SURFACE,
+        "group relative animate-fade-in overflow-hidden p-5 transition-all duration-500",
+        CARD_SURFACE,
         accent,
       )}
     >
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+          <p
+            className={cn(
+              "text-[11px] font-medium uppercase tracking-[0.14em]",
+              LABEL_TEXT,
+            )}
+          >
             {label}
           </p>
           <p className={cn("mt-2 font-serif text-3xl font-semibold", VALUE_TEXT)}>{value}</p>
