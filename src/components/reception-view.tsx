@@ -256,7 +256,10 @@ export function ReceptionView() {
                     <td className="whitespace-nowrap p-4">
                       {medico !== "-" ? (
                         <div className="flex items-center gap-2 text-muted-foreground">
-                          <Stethoscope className="h-3.5 w-3.5 text-gold/60" strokeWidth={1.5} />
+                          <Stethoscope
+                            className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400"
+                            strokeWidth={1.75}
+                          />
                           {medico}
                         </div>
                       ) : (
