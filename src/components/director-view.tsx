@@ -20,6 +20,7 @@ import {
   tooltipStyles,
   isConfirmado,
   isEmTransicao,
+  isFilaAtiva,
 } from "@/lib/theme-classes";
 import {
   Area,
@@ -203,14 +204,33 @@ function DirectorDashboard({ onLogout }: { onLogout: () => void }) {
   const { appointments } = useAppointments();
   const tip = tooltipStyles(isLight);
 
-  const statusData = useMemo(() => {
-    const confirmados = appointments.filter((a) => isConfirmado(a.status)).length;
-    const pendentes = appointments.filter((a) => isEmTransicao(a.status)).length;
-    return [
+  const confirmados = useMemo(
+    () => appointments.filter((a) => isConfirmado(a.status)).length,
+    [appointments],
+  );
+  const emTransicao = useMemo(
+    () => appointments.filter((a) => isEmTransicao(a.status)).length,
+    [appointments],
+  );
+  // Fila ativa: agendado + confirmado + pendente atendente + espera + aguardar.
+  const totalAgendados = useMemo(
+    () => appointments.filter((a) => isFilaAtiva(a.status)).length,
+    [appointments],
+  );
+  const campanhasReativacao = useMemo(
+    () => appointments.filter((a) => Number(a.tentativasReativacao ?? 0) > 0).length,
+    [appointments],
+  );
+  const taxaConfirmacao =
+    totalAgendados > 0 ? `${Math.round((confirmados / totalAgendados) * 100)}%` : "0%";
+
+  const statusData = useMemo(
+    () => [
       { name: "Confirmados", value: confirmados, hex: "#F59E0B" },
-      { name: "Em Transição", value: pendentes, hex: isLight ? "#E2E8F0" : "#334155" },
-    ];
-  }, [appointments, isLight]);
+      { name: "Em Transição", value: emTransicao, hex: isLight ? "#E2E8F0" : "#334155" },
+    ],
+    [confirmados, emTransicao, isLight],
+  );
 
   return (
     <div className="mx-auto max-w-7xl animate-in px-4 pb-16 pt-28 fade-in slide-in-from-bottom-4 duration-500 sm:px-6 lg:px-8">
@@ -239,28 +259,28 @@ function DirectorDashboard({ onLogout }: { onLogout: () => void }) {
         <SummaryCard
           icon={<Users className="h-5 w-5" strokeWidth={1.5} />}
           label="Total Agendados"
-          value={40}
+          value={totalAgendados}
           accent="border-l-4 border-l-amber-500"
           iconColor="text-amber-500"
         />
         <SummaryCard
           icon={<TrendingUp className="h-5 w-5" strokeWidth={1.5} />}
           label="Taxa de Confirmação"
-          value="85%"
+          value={taxaConfirmacao}
           accent="border-l-4 border-l-emerald-600/40"
           iconColor="text-emerald-500"
         />
         <SummaryCard
           icon={<AlertTriangle className="h-5 w-5" strokeWidth={1.5} />}
           label="Pendências de Confirmação"
-          value={6}
+          value={emTransicao}
           accent="border-l-4 border-l-rose-700/40"
           iconColor="text-rose-500"
         />
         <SummaryCard
           icon={<RefreshCw className="h-5 w-5" strokeWidth={1.5} />}
           label="Campanhas de Reativação"
-          value={14}
+          value={campanhasReativacao}
           accent="border-l-4 border-l-rose-700/40"
           iconColor="text-rose-500"
         />

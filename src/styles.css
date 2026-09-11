@@ -2,7 +2,8 @@
 @source "../src";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:is(.dark, .dark *));
+@custom-variant light (&:is(.light, .light *));
 
 /*
  * Design system definition.
@@ -183,11 +184,26 @@
 }
 
 @utility bg-gradient-dark {
-  background-image: linear-gradient(
-    180deg,
-    oklch(0.18 0.006 285) 0%,
-    oklch(0.12 0.006 285) 100%
+  background-color: #09090b;
+  background-image: radial-gradient(
+    120% 90% at 50% 0%,
+    #18181b 0%,
+    #09090b 55%,
+    #000000 100%
   );
+}
+
+/* Modo Claro Luxo — cinza perolado fosco premium. */
+.light .bg-gradient-dark {
+  background-color: #f8fafc;
+  background-image: radial-gradient(120% 90% at 50% 0%, #ffffff 0%, #f8fafc 60%, #f1f5f9 100%);
+}
+
+.light {
+  --background: oklch(0.985 0.002 250);
+  --foreground: oklch(0.22 0.01 265);
+  --muted-foreground: oklch(0.53 0.03 257);
+  --border: oklch(0.5 0.05 85 / 15%);
 }
 
 @utility bg-gradient-gold {

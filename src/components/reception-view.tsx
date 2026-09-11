@@ -1,18 +1,18 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   RefreshCw,
   Users,
-  CalendarClock,
+  Calendar,
   CheckCircle2,
   MessageCircle,
   Stethoscope,
   Search,
   X,
-  Repeat,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getStatusStyle } from "@/lib/status-styles";
 import { useAppointments } from "@/hooks/use-appointments";
+import { SURFACE, VALUE_TEXT, isConfirmado, isFilaAtiva } from "@/lib/theme-classes";
 
 const MESES = [
   "Janeiro",
@@ -52,6 +52,9 @@ export function ReceptionView() {
   // Busca silenciosa em segundo plano a cada 10s (sem estados de carregamento).
   const { appointments, lastUpdate, fetchData } = useAppointments();
   const [search, setSearch] = useState("");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -63,15 +66,17 @@ export function ReceptionView() {
     );
   }, [appointments, search]);
 
-  const total = appointments.length;
+  // Volume bruto total de linhas da planilha.
+  const historicos = appointments.length;
 
-  const agendados = useMemo(
-    () => appointments.filter((a) => (a.status ?? "").trim().toLowerCase() === "agendado").length,
+  // Fila ativa: agendado + confirmado + pendente atendente + espera + aguardar.
+  const filaAtiva = useMemo(
+    () => appointments.filter((a) => isFilaAtiva(a.status)).length,
     [appointments],
   );
 
   const confirmados = useMemo(
-    () => appointments.filter((a) => (a.status ?? "").trim().toLowerCase() === "confirmado").length,
+    () => appointments.filter((a) => isConfirmado(a.status)).length,
     [appointments],
   );
 
@@ -82,7 +87,7 @@ export function ReceptionView() {
   );
 
   return (
-    <div className="mx-auto max-w-7xl px-4 pt-28 pb-16 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl animate-in px-4 pb-16 pt-28 fade-in slide-in-from-bottom-4 duration-500 sm:px-6 lg:px-8">
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="font-serif text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
@@ -94,11 +99,14 @@ export function ReceptionView() {
         </div>
         <div className="flex items-center gap-3">
           <span className="text-xs text-muted-foreground">
-            Atualizado às {lastUpdate.toLocaleTimeString("pt-BR")}
+            {mounted ? `Atualizado às ${lastUpdate.toLocaleTimeString("pt-BR")}` : "\u00A0"}
           </span>
           <button
             onClick={() => void fetchData()}
-            className="group flex items-center gap-2 rounded-full border border-gold/10 bg-black/50 px-4 py-2.5 text-sm font-medium text-foreground backdrop-blur-lg transition-all duration-300 hover:border-gold/25"
+            className={cn(
+              "group flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-foreground transition-all duration-300 hover:border-amber-500/25",
+              SURFACE,
+            )}
           >
             <RefreshCw
               className="h-4 w-4 text-gold transition-transform duration-500 group-hover:rotate-180"
@@ -110,40 +118,43 @@ export function ReceptionView() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        {/* CARD 1 — Platina / Titânio Executivo */}
         <StatCard
           icon={<Users className="h-5 w-5" strokeWidth={1.5} />}
-          label="Total de Pacientes"
-          value={total}
-          accent="border-l-4 border-l-amber-500"
-          iconColor="text-amber-400"
-        />
-        <StatCard
-          icon={<CalendarClock className="h-5 w-5" strokeWidth={1.5} />}
-          label="Com Horário Marcado"
-          value={agendados}
+          label="Atendimentos Históricos"
+          value={historicos}
           accent="border-l-4 border-l-slate-400/40"
-          iconColor="text-slate-300"
+          iconColor="text-slate-400"
+        />
+        {/* CARD 2 — Dourado Metálico de Luxo (fila ativa) */}
+        <StatCard
+          icon={<Calendar className="h-5 w-5" strokeWidth={1.5} />}
+          label="Com Horário Marcado"
+          value={filaAtiva}
+          accent="border-l-4 border-l-amber-500"
+          iconColor="text-amber-500"
         />
         <StatCard
           icon={<CheckCircle2 className="h-5 w-5" strokeWidth={1.5} />}
           label="Confirmados"
           value={confirmados}
           accent="border-l-4 border-l-emerald-600/40"
-          iconColor="text-emerald-400"
+          iconColor="text-emerald-500"
         />
+        {/* CARD 4 — Bronze / Cobre metálico */}
         <StatCard
-          icon={<Repeat className="h-5 w-5" strokeWidth={1.5} />}
+          icon={<RefreshCw className="h-5 w-5" strokeWidth={1.5} />}
           label="Pacientes em Reativação"
           value={emReativacao}
           accent="border-l-4 border-l-rose-700/40"
-          iconColor="text-rose-400"
+          iconColor="text-rose-500"
         />
       </div>
 
       <div className="mt-6 flex items-center gap-3">
         <div className="relative max-w-md flex-1">
           <Search
-            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
             strokeWidth={1.5}
           />
           <input
@@ -151,7 +162,7 @@ export function ReceptionView() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar por nome, telefone, médico, data ou procedimento..."
-            className="h-10 w-full rounded-full border border-gold/10 bg-black/50 pl-10 pr-10 text-sm text-foreground backdrop-blur-lg transition-all duration-300 placeholder:text-muted-foreground/60 focus:border-gold/30 focus:outline-none focus:ring-1 focus:ring-gold/20"
+            className="h-10 w-full rounded-full border border-amber-500/10 bg-black/50 pl-10 pr-10 text-sm text-foreground backdrop-blur-lg transition-all duration-300 placeholder:text-muted-foreground/60 focus:border-amber-500/30 focus:outline-none focus:ring-1 focus:ring-amber-500/20 light:border-amber-600/15 light:bg-white light:text-zinc-900 light:backdrop-blur-none"
           />
           {search && (
             <button
@@ -169,11 +180,11 @@ export function ReceptionView() {
         )}
       </div>
 
-      <div className="mt-6 overflow-hidden rounded-xl border border-gold/10 bg-black/50 shadow-[0_0_15px_rgba(212,175,55,0.03)] backdrop-blur-lg">
+      <div className={cn("mt-6 overflow-hidden", SURFACE)}>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/5">
+              <tr className="border-b border-white/5 light:border-slate-200">
                 <Th>Nº</Th>
                 <Th>Paciente</Th>
                 <Th>Status</Th>
@@ -203,11 +214,11 @@ export function ReceptionView() {
                 return (
                   <tr
                     key={`${apt.telefone}-${apt.nome}-${idx}`}
-                    className="group border-b border-white/5 transition-colors last:border-0 hover:bg-white/[0.03]"
+                    className="group border-b border-white/5 transition-colors last:border-0 hover:bg-white/[0.03] light:border-slate-200 light:hover:bg-slate-50"
                   >
                     <td className="p-4 text-xs font-medium text-muted-foreground">{idx + 1}</td>
                     <td className="p-4">
-                      <div className="font-medium text-foreground">{safe(apt.nome)}</div>
+                      <div className={cn("font-medium", VALUE_TEXT)}>{safe(apt.nome)}</div>
                       {telefone !== "-" && (
                         <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
                           <MessageCircle className="h-3 w-3 text-emerald-400/70" strokeWidth={1.5} />
@@ -286,7 +297,8 @@ function StatCard({
   return (
     <div
       className={cn(
-        "group relative overflow-hidden rounded-xl border border-amber-500/10 bg-black/50 p-5 shadow-[0_0_15px_rgba(212,175,55,0.03)] backdrop-blur-lg transition-all duration-500 hover:border-amber-500/20 animate-fade-in",
+        "group relative animate-fade-in overflow-hidden p-5 transition-all duration-500 hover:border-amber-500/20",
+        SURFACE,
         accent,
       )}
     >
@@ -295,7 +307,7 @@ function StatCard({
           <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
             {label}
           </p>
-          <p className="mt-2 font-serif text-3xl font-semibold text-white">{value}</p>
+          <p className={cn("mt-2 font-serif text-3xl font-semibold", VALUE_TEXT)}>{value}</p>
         </div>
         <div className={cn("shrink-0", iconColor)}>{icon}</div>
       </div>
