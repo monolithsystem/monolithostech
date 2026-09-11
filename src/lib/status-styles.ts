@@ -31,12 +31,24 @@ function titleCase(value: string): string {
     .join(" ");
 }
 
-export function getStatusStyle(status: string): StatusStyle {
+export function getStatusStyle(status?: string | null): StatusStyle {
   const s = (status ?? "")
     .toLowerCase()
     .trim()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
+
+  // Fallback de segurança: coluna E vazia, nula ou sem status preenchido.
+  if (!s) {
+    return {
+      label: "Pendente",
+      className: TITANIUM,
+      dot: "bg-slate-500 dark:bg-zinc-500",
+      hex: "#334155",
+      pulse: false,
+    };
+  }
+
 
   // 3. Espera + confirmação → laranja neon suave
   if (s.includes("espera") && s.includes("confirma")) {
