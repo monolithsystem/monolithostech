@@ -36,18 +36,26 @@ export function tooltipStyles(isLight: boolean) {
   } as const;
 }
 
+function norm(status?: string | null) {
+  return (status ?? "")
+    .toLowerCase()
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
 /** Agrupamento estrito dos status da planilha (coluna E). */
 export function isConfirmado(status?: string | null) {
-  return (status ?? "").toLowerCase().trim().includes("confirmado");
+  return norm(status).includes("confirmado");
 }
 
 export function isEmTransicao(status?: string | null) {
-  const s = (status ?? "").toLowerCase().trim();
+  const s = norm(status);
   return s.includes("espera") || s.includes("aguardar") || s.includes("pendente atendente");
 }
 
 /** Fila ativa: agendados + confirmados + etapas de negociação. */
 export function isFilaAtiva(status?: string | null) {
-  const s = (status ?? "").toLowerCase().trim();
+  const s = norm(status);
   return s.includes("agendado") || isConfirmado(s) || isEmTransicao(s);
 }
