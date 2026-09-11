@@ -20,6 +20,7 @@ import {
   tooltipStyles,
   isConfirmado,
   isEmTransicao,
+  isFilaAtiva,
 } from "@/lib/theme-classes";
 import {
   Area,
