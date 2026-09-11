@@ -304,14 +304,19 @@ function StatCard({
   return (
     <div
       className={cn(
-        "group relative animate-fade-in overflow-hidden p-5 transition-all duration-500 hover:border-amber-500/20",
-        SURFACE,
+        "group relative animate-fade-in overflow-hidden p-5 transition-all duration-500",
+        CARD_SURFACE,
         accent,
       )}
     >
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+          <p
+            className={cn(
+              "text-[11px] font-medium uppercase tracking-[0.14em]",
+              LABEL_TEXT,
+            )}
+          >
             {label}
           </p>
           <p className={cn("mt-2 font-serif text-3xl font-semibold", VALUE_TEXT)}>{value}</p>
