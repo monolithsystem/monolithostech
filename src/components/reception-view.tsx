@@ -12,7 +12,14 @@ import {
 import { cn } from "@/lib/utils";
 import { getStatusStyle } from "@/lib/status-styles";
 import { useAppointments } from "@/hooks/use-appointments";
-import { SURFACE, VALUE_TEXT, isConfirmado, isFilaAtiva } from "@/lib/theme-classes";
+import {
+  SURFACE,
+  CARD_SURFACE,
+  VALUE_TEXT,
+  LABEL_TEXT,
+  isConfirmado,
+  isFilaAtiva,
+} from "@/lib/theme-classes";
 
 const MESES = [
   "Janeiro",
