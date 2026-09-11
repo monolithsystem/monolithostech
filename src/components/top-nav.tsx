@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ClipboardList, BarChart3, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export type TabValue = "recepcao" | "diretor";
 
@@ -19,13 +20,17 @@ export function TopNav({ activeTab, onTabChange, directorUnlocked }: TopNavProps
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // A pílula dourada só envolve o Painel do Diretor quando o acesso está liberado
+  // E o diretor está de facto a visualizar o dashboard.
+  const diretorAtivo = activeTab === "diretor" && directorUnlocked;
+
   return (
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all duration-500",
         scrolled
-          ? "border-b border-gold/10 bg-black/60 backdrop-blur-xl"
-          : "border-b border-white/5 bg-transparent",
+          ? "border-b border-gold/10 bg-black/60 backdrop-blur-xl light:border-amber-600/15 light:bg-white/80"
+          : "border-b border-white/5 bg-transparent light:border-slate-200/60",
       )}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -48,26 +53,29 @@ export function TopNav({ activeTab, onTabChange, directorUnlocked }: TopNavProps
             </div>
           </div>
 
-          <nav className="flex items-center gap-1 rounded-full border border-gold/10 bg-black/50 p-1 backdrop-blur-lg">
-            <NavButton
-              active={activeTab === "recepcao"}
-              onClick={() => onTabChange("recepcao")}
-              icon={<ClipboardList className="h-4 w-4" strokeWidth={1.5} />}
-              label="Recepção"
-            />
-            <NavButton
-              active={activeTab === "diretor"}
-              onClick={() => onTabChange("diretor")}
-              icon={
-                directorUnlocked ? (
-                  <BarChart3 className="h-4 w-4" strokeWidth={1.5} />
-                ) : (
-                  <Lock className="h-4 w-4" strokeWidth={1.5} />
-                )
-              }
-              label="Painel do Diretor"
-            />
-          </nav>
+          <div className="flex items-center gap-3">
+            <nav className="flex items-center gap-1 rounded-full border border-gold/10 bg-black/50 p-1 backdrop-blur-lg light:border-amber-600/15 light:bg-white light:backdrop-blur-none">
+              <NavButton
+                active={activeTab === "recepcao"}
+                onClick={() => onTabChange("recepcao")}
+                icon={<ClipboardList className="h-4 w-4" strokeWidth={1.5} />}
+                label="Recepção"
+              />
+              <NavButton
+                active={diretorAtivo}
+                onClick={() => onTabChange("diretor")}
+                icon={
+                  directorUnlocked ? (
+                    <BarChart3 className="h-4 w-4" strokeWidth={1.5} />
+                  ) : (
+                    <Lock className="h-4 w-4" strokeWidth={1.5} />
+                  )
+                }
+                label="Painel do Diretor"
+              />
+            </nav>
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     </header>
